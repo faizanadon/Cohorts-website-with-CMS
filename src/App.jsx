@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AdminPanel from "./admin/AdminPanel";
 
 // ============================================================
 // SITECONFIG — fallback/seed data (overridden by Supabase at runtime)
@@ -2529,7 +2530,16 @@ const RelatedLinks = ({ dark, setPage, links }) => {
 export default function App() {
   const [dark, setDark] = useState(false);
   const [page, setPage] = useState("home");
-  const [, forceUpdate] = useState(0); // triggers re-render after Supabase loads
+  const [hash, setHash] = useState(window.location.hash);
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  if (hash === "#admin") return <AdminPanel />;
 
   // Load live data from Supabase — overrides siteConfig defaults
   useEffect(() => {
